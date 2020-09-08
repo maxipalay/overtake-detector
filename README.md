@@ -1,9 +1,9 @@
 # TICV-UNASEVI
 
-Repositorio del proyecto UNASEV-I
-Federico Abdo, Juan Abu Arab, Maximiliano Palay, Juan Regent
-Laboratorio TIC V
-Universidad de Montevideo
+Repositorio del proyecto UNASEV-I </br>
+Federico Abdo, Juan Abu Arab, Maximiliano Palay, Juan Regent </br>
+Laboratorio TIC V </br>
+Universidad de Montevideo </br>
 2020
 
 ## Objetivo
