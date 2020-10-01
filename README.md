@@ -8,4 +8,4 @@ Universidad de Montevideo </br>
 
 ## Objetivo
 
-Se propone diseñar y poner en funcionamiento un sistema que permita detectar ciertos casos de conducción temeraria, sobre todo en el marco de los sobrepasos entre vehículos en las vías de un carril por sentido, en zonas donde está prohibido sobrepasar.
+Se propone diseñar y poner en funcionamiento un sistema que permita detectar sobrepasos entre vehículos en zonas donde está prohibido sobrepasar.
