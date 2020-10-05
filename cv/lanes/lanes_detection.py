@@ -9,7 +9,7 @@ import tensorflow.keras.preprocessing as tfprep
 
 def lines_detect_thread(image_ready, inference_done):
     # Load the TFLite model and allocate tensors.
-    interpreter = tflite.Interpreter(model_path="cv/lanes/models/model.tflite")
+    interpreter = tflite.Interpreter(model_path="cv/lanes/models/model.tflite", num_threads=4)
     interpreter.allocate_tensors()
 
     # Get input and output tensors.
