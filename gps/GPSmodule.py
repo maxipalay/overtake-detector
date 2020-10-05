@@ -1,13 +1,20 @@
 import serial
 def datosGPS():
-    gps= serial.Serial("/dev/gps0",baudrate=9600)
+   
     lat="0.0"
     long="0.0"
     speed=""
     date=""
     time=""
     valido=0
-    while True:
+    
+    var=false 
+    try:
+        gps= serial.Serial("/dev/gps0",baudrate=9600)
+        var = true
+    except:
+        print("No se encuentra GPS")
+    while var:
         line=gps.readline()
         data = line.split(",")
         if data[0] =="$GPRMC":
