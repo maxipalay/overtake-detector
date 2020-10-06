@@ -1,9 +1,9 @@
-import threading
+import multiprocessing as mp
 import time
-from cv.lanes.lanes_detection import lines_detect_thread
-from cv.signs.signs_detection import signs_detect_thread
+from cv.lanes.lanes_detection import lines_detect
+from cv.signs.signs_detection import signs_detect
 import cv2
-
+import numpy as np
 import global_vars
 global_vars.init()
 
@@ -12,23 +12,20 @@ current_time = None
 gps_data = None
 
 # sychronization mechanisms
-image_ready = threading.Barrier(3)       # barrier that indicated data is ready
-inference_done = threading.Barrier(3)   # barrier that indicated inference on both networks is done
+image_ready = mp.Barrier(3)       # barrier that indicated data is ready
+inference_done = mp.Barrier(3)   # barrier that indicated inference on both networks is done
 
-# declare & fire inference threads
-thread2 = threading.Thread(name="lanes_detect", target=lines_detect_thread, daemon=True, args=(image_ready, inference_done,))
-thread3 = threading.Thread(name="signs_detect", target=signs_detect_thread, daemon=True, args=(image_ready, inference_done,))
-thread2.start()
-thread3.start()
+process_lanes = mp.Process(name="lanes_detect", target=lines_detect, daemon=True, args=(image_ready, inference_done,))
+process_signs = mp.Process(name="signs_detect", target=signs_detect, daemon=True, args=(image_ready, inference_done,))
+process_lanes.start()
+process_signs.start()
 
 def main():
-    global_vars.image = 0
     counter = 0
-    
     # load video
     cap=cv2.VideoCapture('/Users/maximilianopalay/Documents/UM/2020s2/TICV/street_images/ruta.mov')
     while(cap.isOpened()):
-        for i in range(240):
+        for i in range(2050):
             ret, frame = cap.read()
         break
     
@@ -41,8 +38,12 @@ def main():
         frame = frame[60:660,500:1100,:]
         frame2 = cv2.resize(frame, (224,224), cv2.INTER_LINEAR)
         frame_input = cv2.cvtColor(frame2, cv2.COLOR_BGR2RGB)
-        global_vars.image=frame_input
-        print ("image ready")
+        #print(global_vars.image)
+        global_vars.image[:]=frame_input.reshape(224*224*3)
+        
+        cv2.imshow('input',np.frombuffer(global_vars.image).reshape(224,224,3).astype(np.uint8)) #debug
+        cv2.waitKey(1) & 0xFF      #debug
+        #print ("image ready")      #debug
 
         image_ready.wait()   # release inference threads
 
@@ -54,14 +55,14 @@ def main():
         
         # wait for inference completion
         
-        print("main waiting for results...")
+        #print("main waiting for results...")
         inference_done.wait() # wait for inferences to complete
-        print("main signaled inference done")
+        #print("main signaled inference done")
+        print("time: {:4f} | can overtake: {} | overtaking: {}".format(time.time()-start,global_vars.can_overtake_lanes.value, global_vars.overtaking.value))
         
         # process everything
             # actions
 
-        print(str(time.time()-start))
         counter += time.time()-start
     print()
     print()
