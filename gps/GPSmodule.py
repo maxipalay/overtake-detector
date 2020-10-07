@@ -6,7 +6,7 @@ def datosGPS():
     speed=""
     date=""
     time=""
-    valido=0
+    valido=1
     
     var=false 
     try:
@@ -19,7 +19,7 @@ def datosGPS():
         data = line.split(",")
         if data[0] =="$GPRMC":
             if data[2]=="A":
-                valido=1
+                valido=0
             lat = (float(data[3]))/100
             if data[4]=="S":
                 lat=-lat
@@ -29,3 +29,4 @@ def datosGPS():
             speed=float(data[7])*1.85
             break
     return valido,lat,long,speed
+#invalido=1/valido=0
