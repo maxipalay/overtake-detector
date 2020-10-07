@@ -31,7 +31,7 @@ def main():
     
     while (cap.isOpened()):
         start=time.time()
-        # first capture image and release inference threads
+        # first capture image and release inference processes
         ret, frame = cap.read()
         if ret == False:
             break
@@ -41,11 +41,11 @@ def main():
         #print(global_vars.image)
         global_vars.image[:]=frame_input.reshape(224*224*3)
         
-        cv2.imshow('input',np.frombuffer(global_vars.image).reshape(224,224,3).astype(np.uint8)) #debug
+        cv2.imshow('input',cv2.cvtColor(np.frombuffer(global_vars.image).reshape(224,224,3).astype(np.uint8),cv2.COLOR_RGB2BGR)) #debug
         cv2.waitKey(1) & 0xFF      #debug
         #print ("image ready")      #debug
 
-        image_ready.wait()   # release inference threads
+        image_ready.wait()   # release inference processes
 
         # while waiting for BOTH inference threads to complete, lets read gps data and current time
         
