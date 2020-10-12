@@ -39,7 +39,7 @@ class GPS():
                     break
         else:
             self.get_connection()
-            return (1, 1, 1, 1)
+            return None
         return self.valido,self.lat,self.lon,self.speed
     
 #invalido=1/valido=0
