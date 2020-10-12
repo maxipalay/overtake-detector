@@ -6,6 +6,7 @@ import cv2
 import numpy as np
 import global_vars
 global_vars.init()
+from gps.GPSmodule import GPS
 
 # declare non global vars
 current_time = None
@@ -21,6 +22,9 @@ process_lanes.start()
 process_signs.start()
 
 def main():
+    prev_frame_overtaking = False
+    was_overtaking = False
+    gps = GPS()
     counter = 0
     # load video
     cap=cv2.VideoCapture('/Users/maximilianopalay/Documents/UM/2020s2/TICV/street_images/ruta.mov')
@@ -43,16 +47,16 @@ def main():
         
         cv2.imshow('input',cv2.cvtColor(np.frombuffer(global_vars.image).reshape(224,224,3).astype(np.uint8),cv2.COLOR_RGB2BGR)) #debug
         cv2.waitKey(1) & 0xFF      #debug
+        
         #print ("image ready")      #debug
 
         image_ready.wait()   # release inference processes
 
         # while waiting for BOTH inference threads to complete, lets read gps data and current time
         
-        #gps_data = ...
+        gps_data = gps.get_gps_data()
         current_time = time.time()
-
-        
+        print(gps_data)
         # wait for inference completion
         
         #print("main waiting for results...")
@@ -60,9 +64,14 @@ def main():
         #print("main signaled inference done")
         print("time: {:4f} | can overtake: {} | overtaking: {}".format(time.time()-start,global_vars.can_overtake_lanes.value, global_vars.overtaking.value))
         
-        # process everything
-            # actions
+        # aplicamos un "LPF", consideramos que estamos pasando solo si en los ultimos dos cuadros la red dijo que estabamos pasando
+        overtaking = prev_frame_overtaking and global_vars.overtaking
 
+        if overtaking and not was_overtaking and (not global_vars.can_overtake_lanes or not global_vars.can_overtake_signs):
+            print("OVERTAKING, saving data")
+
+        prev_frame_overtaking = global_vars.overtaking  # retain previous value of global_vars.overtaking
+        was_overtaking = overtaking                     # retain value of overtaking
         counter += time.time()-start
     print()
     print()
