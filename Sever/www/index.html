@@ -1,0 +1,84 @@
+<DOCTYPE html>
+    <html>
+    <head>
+      <title>Unasev</title>
+      <meta charset='utf-8' />
+      <link rel="stylesheet" type=“text/css” href="app.css">
+      <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+      
+    </head>
+    <body>
+      <h1></h1>
+      <div id="vapp" >
+        <input v-model="message" placeholder="Ingese matricula">
+        <button @click="this.buscar">Buscar</button>
+        <ul style="list-style-type: none;"id="tab"  v-if="datos.length >1">
+          <li v-for="reg in datos">
+            Posicion:{{ reg.longitud }}LONG-{{ reg.latitud }}LAT
+            Velocidad:{{ reg.velocidad }}
+            Fecha:{{ reg.fecha }}Hora:{{ reg.hora }}
+            <button v-on:click="fetchPic($event)" :value =reg.id :id= reg.id>Ver Foto</button>
+          </li>
+        </ul>
+        <div v-if="showModal">
+        <img style="max-width: 60%;" v-bind:src="'data:image/png;base64,'+imagen" >
+      </div>
+       
+      
+  </div>
+    
+      
+    <!-- Our View App goes at the end of the document -->
+    <script>
+    const vueApp = new Vue({
+      el: '#vapp',
+      data() {
+        return { 
+          datos : [],
+          showModal:false,
+          message:"",
+          imagen:""
+          
+        }
+      },
+      methods: {
+        buscar() {
+          axios.get('http://179.27.99.46:3030/api/matricula/'+this.message).then(response =>(
+            this.arreglarHorasYfechas(response.data)))
+        },
+        fetchPic(event){
+          this.imagen="";
+          
+          axios.get('http://179.27.99.46:3030/api/fotos/'+event.path[0].attributes[0].nodeValue).then(response =>(
+            this.imagen=response.data.data[0].foto
+            ))
+          this.showModal=true;
+            
+        }
+        ,
+        arreglarHorasYfechas(a){
+          
+          if(a){
+          this.showModal=false
+          this.datos=a.data
+          alert("Se encontraron "+ this.datos.length +"registros")
+          for(i=0;i<this.datos.length;i++){
+            this.datos[i].hora=this.datos[i].hora.toString().match(/.{1,2}/g)[0]+":"+this.datos[i].hora.toString().match(/.{1,2}/g)[1]+":"+this.datos[i].hora.toString().match(/.{1,2}/g)[2]
+            this.datos[i].fecha=this.datos[i].fecha.toString().match(/.{1,2}/g)[0]+this.datos[i].fecha.toString().match(/.{1,2}/g)[1]+"-"+this.datos[i].fecha.toString().match(/.{1,2}/g)[2]+"-"+this.datos[i].fecha.toString().match(/.{1,2}/g)[3]
+          }
+        }
+      }
+        ,
+        close(){
+          this.showModal=false;
+        },
+        open(a){
+          this.imagen[0]=a
+          this.showModal=true;
+        }
+      } 
+    })
+    </script>
+    </body>
+    </html>
