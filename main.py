@@ -66,10 +66,8 @@ def main():
             # release inference processes
             image_ready.wait()
 
-            # while waiting for BOTH inference threads to complete, lets read gps data and current time
+            # while waiting for BOTH inference threads to complete, lets read gps data
             gps_data = gps.get_gps_data()
-
-            current_time = time.time()
             
             # wait for inference completion
             inference_done.wait() # wait for inferences to complete
@@ -83,8 +81,7 @@ def main():
             # check if an infraction is taking place
             if overtaking and not was_overtaking and (not global_vars.can_overtake_lanes or not global_vars.can_overtake_signs):
                 print("OVERTAKING, saving data")
-                dat = date.fromtimestamp(current_time)
-                save_infraction(frame, dat.strftime("%Y%m%d"),dat.strftime("%H%M%S"), gps_data)
+                save_infraction(frame, time.strftime("%Y%m%d"),time.strftime("%H%M%S"), gps_data)
             # update filter variables
             prev_frame_overtaking = global_vars.overtaking  # retain previous value of global_vars.overtaking
             was_overtaking = overtaking                     # retain value of overtaking
