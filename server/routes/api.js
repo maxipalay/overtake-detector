@@ -25,16 +25,13 @@ conn.connect(function (err) {
 (async function () {
    
     router.put('/guardar', async (req, res) => {
-        params =req.body.ejemplo_payload
-  
-        params =params.split("},")
+        params = req.body.ejemplo_payload.split("},")
         try {
             for(i=0;i<params.length-1;i++){
-                var obj = JSON.parse(params[i].split("},")[0]+"}")
-                await query('INSERT INTO registros (matricula,longitud,latitud,velocidad,fecha,hora) VALUES (\"'+obj.matricula+'\",'+parseFloat(obj.longitud)+','+parseFloat(obj.latitud)+','+parseFloat(obj.velocidad)+','+obj.fecha+','+obj.hora+');')
-                var lastId = await   query('SELECT LAST_INSERT_ID();')
-            
-                await query('INSERT INTO fotos VALUES(\"'+obj.foto+'\",'+lastId[0]['LAST_INSERT_ID()']+');')
+		var obj = JSON.parse(params[i]+"}");
+                await query('INSERT INTO registros (matricula,longitud,latitud,velocidad,fecha,hora) VALUES (\"'+obj.matricula+'\",'+parseFloat(obj.longitud)+','+parseFloat(obj.latitud)+','+parseFloat(obj.velocidad)+',\''+obj.fecha+'\',\''+obj.hora+'\');');
+                var lastId = await   query('SELECT LAST_INSERT_ID();');
+                await query('INSERT INTO fotos VALUES(\"'+obj.foto+'\",'+lastId[0]['LAST_INSERT_ID()']+');');
                 }
         //    await db.updateUser(req.params.id, req.body);
             res.status(200).json({ message: 'Usuario actualizado' });
@@ -49,7 +46,6 @@ conn.connect(function (err) {
     
         try {
             let deta = await query('SELECT id,matricula,longitud,latitud,velocidad,fecha,hora FROM registros WHERE matricula = '+"\'"+req.params.id+"\';");
-            console.log(deta)
             res.send({ data:deta });
             res.end();
         } catch (err) {
@@ -61,7 +57,6 @@ conn.connect(function (err) {
     
         try {
             let deta = await query('SELECT foto FROM fotos WHERE id_registro = '+"\'"+req.params.id+"\';");
-            console.log(deta)
             res.send({ data:deta });
             res.end();
         } catch (err) {
