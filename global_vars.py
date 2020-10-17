@@ -1,6 +1,7 @@
 import multiprocessing as mp
 import ctypes
 import numpy as np
+
 def init():
     global image
     global can_overtake_signs

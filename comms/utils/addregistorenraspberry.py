@@ -9,6 +9,7 @@ vel=0.1
 foto=""
 with open("my_image.jpg", "rb") as img_file:
     foto = base64.b64encode(img_file.read())
+    print(foto)
 strin="{ \"matricula\":\""+str(mat)+"\",\"fecha\":\""+str(fecha)+ "\",\"hora\":\""+str(hora)+"\",\"latitud\":"+str(lat) +",\"longitud\":"+str(lon) +",\"velocidad\":"+str(vel) +",\"foto\":\""+foto+"\"},"
 
 file_object.write(strin)

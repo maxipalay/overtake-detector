@@ -1,17 +1,21 @@
 import serial
-from time import sleep
 import serial.tools.list_ports as lp
-GPS_HWID = "10C4:EA60"
+
+import sys
+sys.path.append('..')
+import config as cfg
+
+
 class GPS():
     def get_connection(): # workaround
         return
 
     def __init__(self, attempts = 2):
         self.attempts = attempts # attempts to get gps data in a call to get_gps_data
-        self.lat="0.0"
-        self.lon="0.0"
-        self.speed=""
-        self.valido=1
+        self.lat=-1
+        self.lon=-1
+        self.speed=-1
+        #self.valido=1
         self.conn = None
         self.no_connection = True
         self.get_connection()
@@ -20,7 +24,7 @@ class GPS():
         ports = list(lp.comports(True))
         gps_port = None
         for p in ports:
-            if GPS_HWID in p.hwid:
+            if cfg.gps_hwid in p.hwid:
                 gps_port = p.device
         if gps_port is not None:
             try:
@@ -43,7 +47,9 @@ class GPS():
                 data = line.decode(encoding='us-ascii').split(',')
                 if data[0] == "$GPRMC":
                     if data[2] == "A":
-                        self.valido = 0
+                        #self.valido = 0
+                        # el dato es invalido
+                        return (-1, -1, -1)
                     self.lat = (float(data[3]))/100
                     if data[4] == "S":
                         self.lat = -self.lat
@@ -54,7 +60,8 @@ class GPS():
                     break
         else:
             self.get_connection()
-            return None
-        return self.valido,self.lat,self.lon,self.speed
+            return (-1, -1, -1)
+        print(self.lat,self.lon,self.speed)
+        return (self.lat,self.lon,self.speed)
     
 #invalido=1/valido=0
