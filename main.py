@@ -38,6 +38,7 @@ def main():
     camera = Camera()
     gps = GPS()
     internet_connection = False
+    sleep(5)
     while (True):
         # check for internet connection
         if not conn_queue.empty():
