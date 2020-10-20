@@ -5,7 +5,7 @@ class Camera():
         # load video
         self.cap = cv2.VideoCapture('/Users/maximilianopalay/Documents/UM/2020s2/TICV/street_images/ruta.mov')
         while(self.cap.isOpened()):
-            for i in range(2050):
+            for i in range(2060):
                 ret, frame = self.cap.read()
             break
     
@@ -23,5 +23,6 @@ class Camera():
         #cv2.imshow('input',cv2.cvtColor(frame_input,cv2.COLOR_RGB2BGR)) #debug
         #cv2.waitKey(1) & 0xFF      #debug
         
+        ret, frame = self.cap.read()
         #print ("image ready")      #debug
         return frame_input
