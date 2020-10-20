@@ -38,7 +38,7 @@ def main():
     camera = Camera()
     gps = GPS()
     internet_connection = False
-    sleep(5)
+    sleep(10)
     while (True):
         # check for internet connection
         if not conn_queue.empty():
@@ -77,14 +77,14 @@ def main():
             print("time: {:4f} | can overtake: {} | overtaking: {}".format(time.time()-start,global_vars.can_overtake_lanes.value, global_vars.overtaking.value))
         
             # aplicamos un "LPF", consideramos que estamos pasando solo si en los ultimos dos cuadros la red dijo que estabamos pasando
-            overtaking = prev_frame_overtaking and global_vars.overtaking
-            
+            overtaking = prev_frame_overtaking and global_vars.overtaking.value
+                        
             # check if an infraction is taking place
-            if overtaking and not was_overtaking and (not global_vars.can_overtake_lanes or not global_vars.can_overtake_signs):
+            if overtaking and not was_overtaking and (not global_vars.can_overtake_lanes.value or not global_vars.can_overtake_signs.value):
                 print("OVERTAKING, saving data")
                 save_infraction(frame, time.strftime("%Y%m%d"),time.strftime("%H%M%S"), gps_data)
             # update filter variables
-            prev_frame_overtaking = global_vars.overtaking  # retain previous value of global_vars.overtaking
+            prev_frame_overtaking = global_vars.overtaking.value  # retain previous value of global_vars.overtaking
             was_overtaking = overtaking                     # retain value of overtaking
 
 main()

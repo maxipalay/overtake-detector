@@ -17,7 +17,7 @@ def init():
     server_ip = "179.27.99.46"   
     server_port = "3030"
     server_url = "http://"+server_ip+":"+server_port+"/"
-    ping_threshold = 1.0
+    ping_threshold = 5.0
     check_conn_period = 20
     gps_hwid = "10C4:EA60"
     data_path = "./data/records.txt"
