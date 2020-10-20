@@ -17,19 +17,41 @@
     <div class="navbar white container z-depth-0" >
       <nav class="z-depth-0">
         <div class="nav-wrapper cont z-depth-0" style="background-color: white;">  
-          <a href="#" class="brand-logo">
-            <!-- <img src="./unasevlogo2.jpg">            -->
-          </a> 
-          <h4 style="color: #064795;">&ensp; Grupo 2</h4>
+          <div class="row">
+            <div class="col s2">  
+              <div class="row">
+                <div class="col s6 push-s4">  
+                  <a href="#" class="brand-logo">
+                    <a href="https://imgur.com/l8oWxQQ"><img src="https://i.imgur.com/l8oWxQQ.jpg" title="source: imgur.com"  style="width:60px;height:60px; "/></a>
+                  </a> 
+                </div>
+              </div>
+            </div>
+            <div class="col s1 pull-s1">
+              <div class="row">
+                <div class="col s6 push-s7">  
+                  &ensp;&ensp;<h5 style="color: black; white-space: nowrap;"> <b> TIC V</b></h5>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </nav>
     </div>
     <div class="row"  style="background-color: #064795">
-      <div class="col s2 push-s2">
-        <input v-model="message" placeholder="Ingese matricula" style="text-transform:uppercase; color: white " >
+      <div class="col s2 pull-s2" style = "position:relative; top:9px;">
+        <div class="row">
+          <div class="col s10 push-s2">  
+            <input v-model="message" placeholder="Ingese matricula" style="text-transform:uppercase; color: white " >
+          </div>
+        </div>
       </div>
-      <div class="col s4 push-s2" style = "position:relative; top:8px;" >
-        <button class="waves-effect waves-light btn"  style="background-color: #1e88e5; "@click="this.buscar">Buscar <i class="material-icons right" >search</i> </button>
+      <div class="col s4 pull-s2" style = "position:relative; top:19px;" >
+        <div class="row">
+          <div class="col s6 ">  
+            <button class="waves-effect waves-light btn"  style="background-color: #1e88e5; "@click="this.buscar">Buscar <i class="material-icons right" >search</i> </button>
+          </div>
+        </div>
       </div>
     </div>
     <div class="container">
@@ -68,7 +90,7 @@
                 </div>
                 <div class="card-content">
                   <p>
-                    <h6>Multa</h6><br>
+                    <h6>Infracción</h6><br>
                     Fecha: yyyy-dd-mm<br> 
                     Velocidad: xx</p>
                 </div>
