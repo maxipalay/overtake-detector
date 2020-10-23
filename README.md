@@ -1,5 +1,9 @@
 # TICV-UNASEVI
 
+<p align="center">
+<img src="demo-img.png" width="600">
+</p>
+
 Repositorio del proyecto UNASEV-I </br>
 Federico Abdo, Juan Abu Arab, Maximiliano Palay, Juan Regent </br>
 Laboratorio TIC V </br>
