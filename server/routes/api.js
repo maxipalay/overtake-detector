@@ -25,19 +25,18 @@ conn.connect(function (err) {
 (async function () {
    
     router.put('/guardar', async (req, res) => {
-        params = req.body.ejemplo_payload.split("},")
-        try {
-            for(i=0;i<params.length-1;i++){
-		var obj = JSON.parse(params[i]+"}");
-                await query('INSERT INTO registros (matricula,longitud,latitud,velocidad,fecha,hora) VALUES (\"'+obj.matricula+'\",'+parseFloat(obj.longitud)+','+parseFloat(obj.latitud)+','+parseFloat(obj.velocidad)+',\''+obj.fecha+'\',\''+obj.hora+'\');');
-                var lastId = await   query('SELECT LAST_INSERT_ID();');
-                await query('INSERT INTO fotos VALUES(\"'+obj.foto+'\",'+lastId[0]['LAST_INSERT_ID()']+');');
-                }
-        //    await db.updateUser(req.params.id, req.body);
-            res.status(200).json({ message: 'Usuario actualizado' });
+	infractions = JSON.parse("["+req.body.infractions+"]")
+	try {
+		for (i=0;i<infractions.length-1;i++){
+			infraction = infractions[i]
+			await query('INSERT INTO registros (matricula,longitud,latitud,velocidad,fecha,hora) VALUES (\"'+infraction.plate+'\",'+parseFloat(infraction.lon)+','+parseFloat(infraction.lat)+','+parseFloat(infraction.vel)+',\''+infraction.dat+'\',\''+infraction.tim+'\');');
+                	var lastId = await   query('SELECT LAST_INSERT_ID();');
+			await query('INSERT INTO fotos VALUES(\"'+infraction.img+'\",'+lastId[0]['LAST_INSERT_ID()']+');');
+		}	
+		res.status(200).json({ message: 'datos guardados' });
         } catch (err) {
-            console.log(err);
-            res.status(400).end();
+		console.log(err);
+		res.status(400).end();
         }
     });
 

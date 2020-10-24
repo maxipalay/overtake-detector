@@ -1,7 +1,7 @@
 import multiprocessing as mp
 import threading as th
 from queue import Queue
-
+from infraction import Infraction
 from datetime import date
 import time
 from cv.lanes.lanes_detection import lines_detect
@@ -82,7 +82,9 @@ def main():
             # check if an infraction is taking place
             if overtaking and not was_overtaking and (not global_vars.can_overtake_lanes.value or not global_vars.can_overtake_signs.value):
                 print("OVERTAKING, saving data")
-                save_infraction(frame, time.strftime("%Y%m%d"),time.strftime("%H%M%S"), gps_data)
+                #save_infraction(frame, time.strftime("%Y%m%d"),time.strftime("%H%M%S"), gps_data)
+                inf = Infraction(cfg.plate, time.strftime("%Y%m%d"), time.strftime("%H%M%S"), gps_data, frame)
+                save_infraction(inf)
             # update filter variables
             prev_frame_overtaking = global_vars.overtaking.value  # retain previous value of global_vars.overtaking
             was_overtaking = overtaking                     # retain value of overtaking

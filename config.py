@@ -20,5 +20,5 @@ def init():
     ping_threshold = 5.0
     check_conn_period = 20
     gps_hwid = "10C4:EA60"
-    data_path = "./data/records.txt"
+    data_path = "./data/records_new.txt"
     gps_period = 1

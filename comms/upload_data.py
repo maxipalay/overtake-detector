@@ -18,7 +18,7 @@ def upload_data():
     if elapsed_time < cfg.ping_threshold:
         try:
             with open(cfg.data_path, 'rb') as f:
-                r = requests.put(cfg.server_url+'api/guardar', data={'ejemplo_payload': f})
+                r = requests.put(cfg.server_url+'api/guardar', data={'infractions':f})
             print(r.status_code)
             if r.status_code == 200:
                 print("upload to server successful")
