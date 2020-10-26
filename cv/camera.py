@@ -3,7 +3,7 @@ import cv2
 class Camera():
     def __init__(self):
         # load video
-        self.cap = cv2.VideoCapture('/Users/maximilianopalay/Documents/UM/2020s2/TICV/street_images/ruta.mov')
+        self.cap = cv2.VideoCapture('../street_images/ruta.mov')
         while(self.cap.isOpened()):
             for i in range(2060):
                 ret, frame = self.cap.read()
