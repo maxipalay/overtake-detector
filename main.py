@@ -86,17 +86,19 @@ def main():
             overtaking.append(global_vars.overtaking.value)
             overtaking.pop(0) # remove oldest element
             overtaking_now = sum(overtaking) >= 2 # there are 2 or more True in the list
-
+            if was_overtaking and not overtaking_now:
+                recorded_infraction=False
             # check if an infraction is taking place
-            if overtaking_now and not was_overtaking and (not global_vars.can_overtake_lanes.value):# or not global_vars.can_overtake_signs.value):
+            if overtaking_now and not recorded_infraction and (not global_vars.can_overtake_lanes.value):# or not global_vars.can_overtake_signs.value):
                 print("OVERTAKING, saving data")
                 alert_event.set()
                 #save_infraction(frame, time.strftime("%Y%m%d"),time.strftime("%H%M%S"), gps_data)
                 inf = Infraction(cfg.plate, time.strftime("%Y%m%d"), time.strftime("%H%M%S"), gps_data, frame)
                 save_infraction(inf)
+                recorded_infraction=True
             # update filter variables
             #prev_frame_overtaking = global_vars.overtaking.value  # retain previous value of global_vars.overtaking
-            was_overtaking = overtaking                     # retain value of overtaking
+            was_overtaking = overtaking_now                     # retain value of overtaking
 
 main()
 
