@@ -3,7 +3,7 @@ import sys
 sys.path.append("...")
 import global_vars
 import config as cfg
-#import gpiozero as gpio
+import gpiozero as gpio
 from time import sleep
 
 def alert(event):

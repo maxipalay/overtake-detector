@@ -38,7 +38,6 @@ thread_check_conn.start()
 
 def main():
     overtaking = [False,False,False]
-    can_overtake = [False,False,False]
     prev_frame_overtaking = False
     was_overtaking = False
     camera = Camera()
@@ -85,11 +84,11 @@ def main():
             # aplicamos un "LPF", consideramos que estamos pasando solo si en los ultimos dos cuadros la red dijo que estabamos pasando
             #overtaking = prev_frame_overtaking and global_vars.overtaking.value
             overtaking.append(global_vars.overtaking.value)
-            overtaking.pop[0] # remove oldest element
+            overtaking.pop(0) # remove oldest element
             overtaking_now = sum(overtaking) >= 2 # there are 2 or more True in the list
 
             # check if an infraction is taking place
-            if overtaking_now and not was_overtaking and (not global_vars.can_overtake_lanes.value or not global_vars.can_overtake_signs.value):
+            if overtaking_now and not was_overtaking and (not global_vars.can_overtake_lanes.value):# or not global_vars.can_overtake_signs.value):
                 print("OVERTAKING, saving data")
                 alert_event.set()
                 #save_infraction(frame, time.strftime("%Y%m%d"),time.strftime("%H%M%S"), gps_data)
