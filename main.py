@@ -38,6 +38,7 @@ thread_check_conn.start()
 
 def main():
     overtaking = [False,False,False]
+    recorded_infraction = False
     prev_frame_overtaking = False
     was_overtaking = False
     camera = Camera()
