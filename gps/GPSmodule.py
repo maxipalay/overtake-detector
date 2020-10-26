@@ -46,10 +46,9 @@ class GPS():
                     break
                 data = line.decode(encoding='us-ascii').split(',')
                 if data[0] == "$GPRMC":
-                    if data[2] == "A":
-                        #self.valido = 0
-                        # el dato es invalido
-                        return (-1, -1, -1)
+                    if data[2] != "A":
+                        # dato no valido
+                        return (-1,-1,-1)
                     self.lat = (float(data[3]))/100
                     if data[4] == "S":
                         self.lat = -self.lat
