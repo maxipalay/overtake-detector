@@ -37,6 +37,8 @@ thread_check_conn = th.Thread(name="check_connection", target=check_connection, 
 thread_check_conn.start()
 
 def main():
+    overtaking = [False,False,False]
+    can_overtake = [False,False,False]
     prev_frame_overtaking = False
     was_overtaking = False
     camera = Camera()
@@ -81,25 +83,21 @@ def main():
             print("time: {:4f} | can overtake: {} | overtaking: {}".format(time.time()-start,global_vars.can_overtake_lanes.value, global_vars.overtaking.value))
         
             # aplicamos un "LPF", consideramos que estamos pasando solo si en los ultimos dos cuadros la red dijo que estabamos pasando
-            overtaking = prev_frame_overtaking and global_vars.overtaking.value
-                        
+            #overtaking = prev_frame_overtaking and global_vars.overtaking.value
+            overtaking.append(global_vars.overtaking.value)
+            overtaking.pop[0] # remove oldest element
+            overtaking_now = sum(overtaking) >= 2 # there are 2 or more True in the list
+
             # check if an infraction is taking place
-            if overtaking and not was_overtaking and (not global_vars.can_overtake_lanes.value or not global_vars.can_overtake_signs.value):
+            if overtaking_now and not was_overtaking and (not global_vars.can_overtake_lanes.value or not global_vars.can_overtake_signs.value):
                 print("OVERTAKING, saving data")
                 alert_event.set()
                 #save_infraction(frame, time.strftime("%Y%m%d"),time.strftime("%H%M%S"), gps_data)
                 inf = Infraction(cfg.plate, time.strftime("%Y%m%d"), time.strftime("%H%M%S"), gps_data, frame)
                 save_infraction(inf)
             # update filter variables
-            prev_frame_overtaking = global_vars.overtaking.value  # retain previous value of global_vars.overtaking
+            #prev_frame_overtaking = global_vars.overtaking.value  # retain previous value of global_vars.overtaking
             was_overtaking = overtaking                     # retain value of overtaking
 
 main()
 
-'''
-send_data_thread()  # checks for wifi connection, if it finds one it will try to send recorded data
-lines_detect_thread() # road lines detection
-signs_detect_thread() # signs detection
-alerts_thread()
-gps_logger_thread()
-'''
