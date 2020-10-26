@@ -18,17 +18,21 @@ from cv.camera import Camera
 from time import sleep
 from comms.data_saver import save_infraction
 from comms.upload_data import upload_data
+from alerts.alerts import alert
 
 # sychronization mechanisms for processes 
 image_ready = mp.Barrier(3)       # barrier that holds inference until data is ready
 inference_done = mp.Barrier(3)   # barrier that holds main until inference on both networks is done
 conn_queue = Queue(maxsize=1)
+alert_event = th.Event()
 
 process_lanes = mp.Process(name="lanes_detect", target=lines_detect, daemon=True, args=(image_ready, inference_done,))
 process_signs = mp.Process(name="signs_detect", target=signs_detect, daemon=True, args=(image_ready, inference_done,))
 process_lanes.start()
 process_signs.start()
 
+thread_alerts = th.Thread(name="alerts_thread", target = alert, daemon=True, args=(alert_event,))
+thread_alerts.start()
 thread_check_conn = th.Thread(name="check_connection", target=check_connection, daemon=True, args=(conn_queue,))
 thread_check_conn.start()
 
@@ -82,6 +86,7 @@ def main():
             # check if an infraction is taking place
             if overtaking and not was_overtaking and (not global_vars.can_overtake_lanes.value or not global_vars.can_overtake_signs.value):
                 print("OVERTAKING, saving data")
+                alert_event.set()
                 #save_infraction(frame, time.strftime("%Y%m%d"),time.strftime("%H%M%S"), gps_data)
                 inf = Infraction(cfg.plate, time.strftime("%Y%m%d"), time.strftime("%H%M%S"), gps_data, frame)
                 save_infraction(inf)
