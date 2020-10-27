@@ -5,7 +5,6 @@ import sys
 sys.path.append('..')
 import config as cfg
 
-
 class GPS():
     def get_connection(): # workaround
         return
@@ -62,5 +61,6 @@ class GPS():
             return (-1, -1, -1)
         print(self.lat,self.lon,self.speed)
         return (self.lat,self.lon,self.speed)
-    
+
+
 #invalido=1/valido=0
