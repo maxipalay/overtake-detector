@@ -38,24 +38,29 @@ class GPS():
     def get_gps_data(self):
         if self.conn:
             for i in range(1, self.attempts):
-                try:
+                try:            # try to read line
                     line = self.conn.readline()
-                except:
+                except:         # if exception de-reference connection
                     self.conn = None
-                    break
-                data = line.decode(encoding='us-ascii').split(',')
-                if data[0] == "$GPRMC":
-                    if data[2] != "A":
-                        # dato no valido
-                        return (-1,-1,-1)
-                    self.lat = (float(data[3]))/100
-                    if data[4] == "S":
-                        self.lat = -self.lat
-                    self.lon = (float(data[5]))/100
-                    if data[6]=="W":
-                        self.lon = -self.lon
-                    self.speed = float(data[7])*1.85
-                    break
+                    print("couldnt read gps data")
+                    return (-1,-1,-1)
+                try:            # try to decode data
+                    data = line.decode(encoding='us-ascii').split(',')
+                    if data[0] == "$GPRMC": # this is the data we need
+                        if data[2] != "A":  # 
+                            # dato no valido
+                            return (-1,-1,-1)
+                        self.lat = (float(data[3]))/100
+                        if data[4] == "S":
+                            self.lat = -self.lat
+                        self.lon = (float(data[5]))/100
+                        if data[6]=="W":
+                            self.lon = -self.lon
+                        self.speed = float(data[7])*1.85
+                        break
+                except:         # error decoding gps data
+                    print("error decoding gps data")
+                    return (-1,-1,-1)
         else:
             self.get_connection()
             return (-1, -1, -1)
@@ -63,4 +68,3 @@ class GPS():
         return (self.lat,self.lon,self.speed)
 
 
-#invalido=1/valido=0
