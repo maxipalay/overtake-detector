@@ -27,7 +27,7 @@ conn.connect(function (err) {
     router.put('/guardar', async (req, res) => {
 	infractions = JSON.parse("["+req.body.infractions+"]")
 	try {
-		for (i=0;i<infractions.length-1;i++){
+		for (i=0;i<infractions.length;i++){
 			infraction = infractions[i]
 			await query('INSERT INTO registros (matricula,longitud,latitud,velocidad,fecha,hora) VALUES (\"'+infraction.plate+'\",'+parseFloat(infraction.lon)+','+parseFloat(infraction.lat)+','+parseFloat(infraction.vel)+',\''+infraction.dat+'\',\''+infraction.tim+'\');');
                 	var lastId = await   query('SELECT LAST_INSERT_ID();');
