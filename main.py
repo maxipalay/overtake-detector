@@ -44,7 +44,7 @@ def main():
     camera = Camera()
     gps = GPS()
     internet_connection = False
-    sleep(10)
+    sleep(5)
     while (True):
         # check for internet connection
         if not conn_queue.empty():
@@ -67,6 +67,7 @@ def main():
             global_vars.image[:]=frame.reshape(224*224*3)
         
             # show image (debugging)
+            frame_bgr = cv2.cvtColor(frame.astype(np.uint8),cv2.COLOR_RGB2BGR)
             cv2.imshow('input',cv2.cvtColor(np.frombuffer(global_vars.image).reshape(224,224,3).astype(np.uint8),cv2.COLOR_RGB2BGR))
             cv2.waitKey(1) & 0xFF
 
@@ -94,7 +95,7 @@ def main():
                 print("OVERTAKING, saving data")
                 alert_event.set()
                 #save_infraction(frame, time.strftime("%Y%m%d"),time.strftime("%H%M%S"), gps_data)
-                inf = Infraction(cfg.plate, time.strftime("%Y%m%d"), time.strftime("%H%M%S"), gps_data, frame)
+                inf = Infraction(cfg.plate, time.strftime("%Y%m%d"), time.strftime("%H%M%S"), gps_data, frame_bgr)
                 save_infraction(inf)
                 recorded_infraction=True
             # update filter variables
