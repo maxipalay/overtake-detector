@@ -5,6 +5,7 @@ import global_vars
 import numpy as np
 import tensorflow.lite as tflite
 import tensorflow.keras.preprocessing as tfprep
+from cv2 import GaussianBlur
 
 def lines_detect(image_ready, inference_done):
     # Load the TFLite model and allocate tensors.
@@ -36,8 +37,10 @@ def lines_detect(image_ready, inference_done):
         # green mask
         green_mask = predictions[:,:,3]+predictions[:,:,5]
         
+        red_mask = GaussianBlur(red_mask, (3,3), 0)
         red_mask[red_mask<0.8] = 0
         red_mask[red_mask>=0.8] = 255
+        green_mask = GaussianBlur(green_mask, (3,3), 0)
         green_mask[green_mask<0.8] = 0
         green_mask[green_mask>=0.8] = 255
         
@@ -47,9 +50,9 @@ def lines_detect(image_ready, inference_done):
         overtaking=False
         if can_overtake:
             # trabajo con green_mask
-            (rows,cols)=np.where(green_mask==255)
+            (rows,cols)=np.where(green_mask==255) # busco los indices de las posiciones donde esta presente el color verde
             rows_indices = [index for index,elem in enumerate(rows) if elem==rows[-1]]
-            cols_indices = cols[rows_indices]
+            cols_indices = cols[rows_indices] # agarro los indices de las columnas donde hay mascara verde (pero solo los de la fila de mas abajo)
             if rows_indices:
                 colsmin = min(cols_indices)
                 colsmax = max(cols_indices)
