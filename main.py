@@ -37,8 +37,10 @@ thread_check_conn = th.Thread(name="check_connection", target=check_connection, 
 thread_check_conn.start()
 
 def main():
-    overtaking = [False,False,False]
+    overtaking = [False,False,False] # sliding windows filter for overtaking
+    can_overtake = [False,False,False] # sliding window filter for can_overtake
     recorded_infraction = False
+    could_overtake = False
     prev_frame_overtaking = False
     was_overtaking = False
     camera = Camera()
@@ -84,14 +86,17 @@ def main():
             print("time: {:4f} | can overtake: {} | overtaking: {}".format(time.time()-start,global_vars.can_overtake_lanes.value, global_vars.overtaking.value))
         
             # aplicamos un "LPF", consideramos que estamos pasando solo si en los ultimos dos cuadros la red dijo que estabamos pasando
-            #overtaking = prev_frame_overtaking and global_vars.overtaking.value
             overtaking.append(global_vars.overtaking.value)
             overtaking.pop(0) # remove oldest element
             overtaking_now = sum(overtaking) >= 2 # there are 2 or more True in the list
-            if was_overtaking and not overtaking_now:
+            can_overtake.append(global_vars.can_overtake_lanes.value)
+            can_overtake.pop(0)
+            can_overtake_now = sum(can_overtake) >= 2
+            print(can_overtake_now)
+            if (was_overtaking and not overtaking_now) or (could_overtake and not can_overtake_now):
                 recorded_infraction=False
             # check if an infraction is taking place
-            if overtaking_now and not recorded_infraction and (not global_vars.can_overtake_lanes.value):# or not global_vars.can_overtake_signs.value):
+            if overtaking_now and not recorded_infraction and (not can_overtake_now):# or not global_vars.can_overtake_signs.value):
                 print("OVERTAKING, saving data")
                 alert_event.set()
                 #save_infraction(frame, time.strftime("%Y%m%d"),time.strftime("%H%M%S"), gps_data)
@@ -99,8 +104,7 @@ def main():
                 save_infraction(inf)
                 recorded_infraction=True
             # update filter variables
-            #prev_frame_overtaking = global_vars.overtaking.value  # retain previous value of global_vars.overtaking
             was_overtaking = overtaking_now                     # retain value of overtaking
-
+            could_overtake = can_overtake_now
 main()
 
