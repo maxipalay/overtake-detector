@@ -23,7 +23,7 @@ from alerts.alerts import alert
 # sychronization mechanisms for processes 
 image_ready = mp.Barrier(3)       # barrier that holds inference until data is ready
 inference_done = mp.Barrier(3)   # barrier that holds main until inference on both networks is done
-conn_queue = Queue(maxsize=1)
+conn_event = th.Event()
 alert_event = th.Event()
 
 process_lanes = mp.Process(name="lanes_detect", target=lines_detect, daemon=True, args=(image_ready, inference_done,))
@@ -33,7 +33,7 @@ process_signs.start()
 
 thread_alerts = th.Thread(name="alerts_thread", target = alert, daemon=True, args=(alert_event,))
 thread_alerts.start()
-thread_check_conn = th.Thread(name="check_connection", target=check_connection, daemon=True, args=(conn_queue,))
+thread_check_conn = th.Thread(name="check_connection", target=check_connection, daemon=True, args=(conn_event,))
 thread_check_conn.start()
 
 def main():
@@ -46,18 +46,13 @@ def main():
     camera = Camera()
     gps = GPS()
     internet_connection = False
-    sleep(5)
+    sleep(2)
     while (True):
         # check for internet connection
-        if not conn_queue.empty():
-            conn=conn_queue.get_nowait()
-            internet_connection = conn
-        
-        if internet_connection:
-            # send data to server
+        if conn_event.is_set():
             upload_data()
-            sleep(10)
-        
+            sleep(cfg.check_conn_period)
+
         else:
             start = time.time()
             # get camera frame
@@ -71,7 +66,7 @@ def main():
             # show image (debugging)
             frame_bgr = cv2.cvtColor(frame.astype(np.uint8),cv2.COLOR_RGB2BGR)
             cv2.imshow('input',cv2.cvtColor(np.frombuffer(global_vars.image).reshape(224,224,3).astype(np.uint8),cv2.COLOR_RGB2BGR))
-            cv2.waitKey(1) & 0xFF
+            cv2.waitKey(1)
 
             # release inference processes
             image_ready.wait()
